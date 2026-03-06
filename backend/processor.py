@@ -23,39 +23,67 @@ class FinanceProcessor:
         print(f" Loaded {len(self.df)} transactions.")
 
     def run_simple_logic(self):
-        """
-        Phase 1: Before we pay for AI, let's make sure we can manipulate the data.
-        """
 
-        # Let's add a temporary 'Pending' category to everything
-        self.df['category'] = 'Uncategorized'
+        if self.df is None:
+            raise ValueError("Data is not loaded. Call load_data() first.")
+
+        # For every row in 'description', run my function and put the result in the 'category' column.
+        self.df['category'] = self.df['description'].apply(self.get_ai_category)
         return self.df
 
-    def get_ai_category(self, description):
-        
+    def get_total_spending(self):
+        """Return the total value in the `amount` column."""
+        if self.df is None:
+            raise ValueError("Data is not loaded. Call load_data() first.")
+        if "amount" not in self.df.columns:
+            raise KeyError("Missing required column: amount")
+        return self.df["amount"].sum()
+
+    def get_expensive_transactions(self, limit: float):
+        expensive_items = self.df[self.df['amount'] > limit]
+        """Return transactions where amount is greater than `limit`."""
+        if self.df is None:
+            raise ValueError("Data is not loaded. Call load_data() first.")
+        if "amount" not in self.df.columns:
+            raise KeyError("Missing required column: amount")
+        return self.df[self.df["amount"] > limit]
+
+    def get_ai_category(self, description: str):
+
+    # Define a map
+        mapping = {
+            "Starbucks": "Food & Drink",
+            "Netflix": "Subscriptions",
+            "Shell": "Transport",
+            "Whole Foods": "Groceries",
+            "Steam": "Entertainment"
+        }
+
+        # 'desc_lower' makes it case-insensitive
+        desc_lower = description.lower()
+
+        for keyword, category in mapping.items():
+            if keyword.lower() in desc_lower:
+                return category
+
+        # The Fallback
+        return "Miscellaneous"
 
 # --- Execution Block ---
 if __name__ == "__main__":
     PATH_TO_CSV = "../data/transactions.csv"
-
     processor = FinanceProcessor(PATH_TO_CSV)
 
-    try:
-        processor.load_data()
-
-        # 1. Show Total
-        total = processor.get_total_spending()
-        print(f"Total spending: {total:.2f}")
-
-        # 2. Show expensive stuff
-        limit = 20.0
-        print(f"\n Items over ${limit}:")
-        print(processor.get_expensive_transactions(limit))
-
-    except Exception as e:
-        print(f" Error: {e}")
-
     processor.load_data()
-    processed_data = processor.run_simple_logic()
 
-    print(processed_data.head())
+    #1. Run the 'Brain' (The Dictionary mapping)
+    processed_df = processor.run_simple_logic()
+
+    #2. Check a big spender
+    big_stuff = processor.get_expensive_transactions(20.0)
+
+    print("--- CATEGORIZED DATA ---")
+    print(processed_df[['description', 'category']]) # Show only these two columns
+
+    print("\n--- BIG SPENDERS ---")
+    print(big_stuff)
