@@ -125,7 +125,7 @@ const { totalSpent, chartData } = useMemo(() => {
                         <td className="p-4 text-sm text-slate-400 font-mono">{t.date}</td>
                         <td className="p-4 font-medium text-slate-200">{t.description}</td>
                         <td className="p-4">
-                          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm transition-all group-hover:bg-emerald-500/20 group-hover:shadow-[0_0_10px_rgba(52,211,153,0.2)]">
+                          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm transition-all group-hover:bg-emerald-500/20 group-hover:shadow-[0_0_10px_rgba(52,211,153,0.15)] group-hover:scale-105 inline-block">
                             {t.category}
                           </span>
                         </td>
