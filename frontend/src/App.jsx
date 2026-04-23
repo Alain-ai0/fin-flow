@@ -68,7 +68,7 @@ const { totalSpent, chartData } = useMemo(() => {
               <TrendingDown size={18} />
               <span className="text-sm font-medium uppercase tracking-wider">Total Spending</span>
             </div>
-            <div className="text-3xl font-bold">${totalSpent.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+            <div className="text-3xl font-bold">${totalSpent.toFixed(2)}</div>
           </div>
 
           <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 md:col-span-2 flex items-center justify-between">
@@ -125,7 +125,7 @@ const { totalSpent, chartData } = useMemo(() => {
                         <td className="p-4 text-sm text-slate-400 font-mono">{t.date}</td>
                         <td className="p-4 font-medium text-slate-200">{t.description}</td>
                         <td className="p-4">
-                          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 backdrop-blur-sm transition-all group-hover:bg-emerald-500/20 group-hover:shadow-[0_0_10px_rgba(52,211,153,0.2)]">
                             {t.category}
                           </span>
                         </td>
