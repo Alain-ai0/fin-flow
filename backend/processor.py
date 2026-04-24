@@ -12,7 +12,7 @@ class Transaction(BaseModel):
     category: str  # The AI will fill this in
 
 class FinanceProcessor:
-    def __init__(self, csv_path: str):
+    def __init__(self, csv_path=None):
         self.csv_path = csv_path
         self.df = None
 
@@ -53,7 +53,7 @@ class FinanceProcessor:
         """
         Assigns a category using a fast local lookup, falling back to a local LLM (Ollama) for complex descriptions.
         """
-        # Check local dictionary first (Fast & Free)
+    
         # Define a map
         # Priority 1: Instant lookup for common/known vendors
         mapping = {

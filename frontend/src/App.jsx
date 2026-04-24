@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { Wallet, ArrowUpRight, ArrowDownLeft, BarChart3, TrendingDown } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
@@ -6,10 +6,62 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 // Colors for a high-fidelity look
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
 
+const FileUpload = ({ onUploadSuccess }) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setUploading(true);
+    try {
+      await axios.post('http://127.0.0.1:8000/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      onUploadSuccess(); // Refresh the data list
+    } catch (error) {
+      alert("upload failed: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="bg-slate-900 border-2 border-dashed border-slate-700 rounded-2xl p-8 text-center hover:border-emerald-500 transition-colors group cursor-pointer relative">
+      <input
+        type="file"
+        onChange={handleFileChange}
+        className="absolute inset-0 opacity-0 cursor-pointer"
+      />
+      <div className="flex flex-col items-center gap-2">
+        <div className="p-3 bg-slate-800 rounded-full group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
+          {uploading ? <div className="animate-spin h-6 w-6 border-2 border-t-transparent border-emerald-400 rounded-full" /> : "📁"}
+        </div>
+        <p className="text-slate-300 font-medium">Click or drag bank statement (CSV)</p>
+        <p className="text-slate-500 text-xs text-uppercase tracking-widest">Max size: 5MB</p>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   // 1. State: This is the memory of my app
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/transactions');
+      setTransactions(response.data.transactions);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
+  }, []); // The Empty array means this function only get created once
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +75,7 @@ function App() {
       }
     };
     fetchData();
-  }, []);
+  }, [fetchData]);
 
 // Calculate totals and group data for the chart
 const { totalSpent, chartData } = useMemo(() => {
@@ -100,6 +152,11 @@ const { totalSpent, chartData } = useMemo(() => {
               <p className="text-xs text-slate-500 max-w-[200px]">Visualizing your expenses across {chartData.length} AI-identified categories.</p>
             </div>
           </div>
+        </div>
+
+        <div className="mb-8">
+          <h3 className="text-slate-400 text-sm mb-4 uppercase tracking-widest">Data Input</h3>
+          <FileUpload onUploadSuccess={fetchData} />
         </div>
 
             {/* Recent transactions table */}
