@@ -7,7 +7,11 @@ import os
 import time
 
 
-app = FastAPI()
+app = FastAPI(
+    title="Cognis API",
+    description="Backend engine for AI-powered financial tracking",
+    version="1.0.0"
+)
 finance_engine = FinanceProcessor()
 
 app.add_middleware(

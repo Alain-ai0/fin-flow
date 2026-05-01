@@ -104,9 +104,9 @@ const { totalSpent, chartData } = useMemo(() => {
       <header className="flex justify-between items-center mb-10 max-w-6xl mx-auto">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Wallet className="text-emerald-400" /> Fin-Flow
+            <Wallet className="text-emerald-400" /> Cognis
           </h1>
-          <p className="text-slate-400">AI-Powered Financial Insights</p>
+          <p className="text-slate-400">Advanced financial intelligence</p>
         </div>
 
         <div className="flex items-center gap-4">
